@@ -1,0 +1,5 @@
+species,nesting_suitability_cavity_index,nesting_suitability_ground_index,nesting_suitability_stem_index,nesting_suitability_wood_index,foraging_activity_spring_index,foraging_activity_summer_index,foraging_activity_fall_index,alpha,relative_abundance
+wood nesters,0,0,0,1,0.314,0.533,0.153,87,0.03
+stem nesters,0,0,1,0,0.366,0.499,0.135,48,0.141
+ground nesters,0,1,0,0,0.334,0.563,0.103,151,0.745
+cavity stem nesters,1,0,1,0,0.979,0.021,0,579,0.068
