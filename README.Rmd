@@ -1,0 +1,104 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# landscape-complexity-data
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The GitHub repository "landscape-complexity-data" supports the publication "Benefits of wildflower strips in agricultural field margins differ based on landscape complexity across four ecosystem services," published in _Landscape Ecology_.
+
+The repository is structured as an R package. The "data-raw/" folder contains the underlying data and code used to build the biophysical tables for the study's ecosystem service models. Essential functions for processing the raw data are stored in the folder “R/”. These functions are loaded as part of the package. The package can be loaded by ensuring the working directory is the repository folder (e.g., by opening the .Rproj file with Rstudio) and then running `devtools::load_all()`. You can also install the development version of landscape-complexity-data from [GitHub](https://github.com/) with:
+
+``` {r, eval = FALSE}
+# install.packages("devtools")
+devtools::install_github("ClimateEcology/landscape-complexity-data")
+```
+
+### Writing biophys tables
+
+The biophysical tables are loaded as part of the package. These can be written to a csv file as follows:
+
+```{r}
+devtools::load_all()
+
+write.csv(biophys_sdr, "biophys_sdr.csv")
+```
+
+The available biophysical tables loaded in the package are:
+
+|package data | Explanation |
+|:-------------|:-------------|
+|`biophys_pol`|Pollinator abundance biophysical table |
+|`guild_table`|Pollinator abundance bee guild table |
+|`biophys_swy`|Seasonal water yield (groundwater recharge) biophysical table |
+|`biophys_sdr`|Sediment delivery ratio (sediment runoff) biophysical table |
+|`biophys_ndr`|Nutrient delivery ratio (nutrient runoff) biophysical table |
+
+### Field and wildflower strip delineation
+
+The package also includes functions to build wildflower strips around management units defined by the [crop sequence boundary](https://www.nass.usda.gov/Research_and_Science/Crop-Sequence-Boundaries/index.php) dataset (Hunt et al. 2024). The steps for preparing the field and wildflower strip data are as follows:
+
+#### 1. Query crop sequence boundary for management units
+
+Management units within a watershed can be extracted from the large crop sequence boundary (CSB) dataset using the `query_cropbdry` function. This requires loading the watershed polygon first and directing the function to the local filepath for the crop sequence boundary dataset.
+
+``` {r, eval = FALSE}
+watershed <- sf::st_read("path/to/waterhshed.gpkg")
+selected_mgmt_units <- query_cropbdry(watershed, "path/to/crop_sequence_boundary_dataset")
+```
+
+#### 2. Add management units to the cropland data layer raster
+
+The extracted management unit polygons are added to the [cropland data layer](https://www.nass.usda.gov/Research_and_Science/Cropland/SARS1a.php) (CDL) coverage of the waterhsed using the function `make_fields`.
+
+```{r}
+datadir <- paste0(testthat::test_path(),"/testdata/")      # use test data as example
+
+# load data from datadir
+cdl <- terra::rast(paste0(datadir, "cdl_hu010700060102.tif"))
+selected_mgmt_units <- sf::st_read(
+  paste0(datadir, "csbtest.gpkg")                          # preloaded boundary data
+  )
+
+cdl_fields <- make_fields(fields.poly=selected_mgmt_units, # queried management units
+                          field.col="R22",                 # CSB column indicating desired year, e.g. 2022
+                          cdl.rast=cdl                     # CDL object
+                          )
+```
+
+#### 3. Delineate field margins around management units
+
+The function `make_fieldmargins` delineates the margins around each field. It attempts to avoid double counting field edges by adding margins iteratively, only adding margins to one field at a time and skipping over field edges that have been previously filled. The output is a raster of only field margins. 
+
+```{r}
+margins <- make_fieldmargins(
+  field.id.rast=cdl_fields$id,       # field id layer from `make_fields` output
+  field.crop.rast = cdl_fields$crop  # crop type layer from `make_fields` output
+  )
+```
+
+#### 4. Add field margins to the CDL layer
+
+Use the function `add_margins_cdl` to re-classify field margin cells in a clean CDL layer to pollinator habitat (cell value = 171). The clean CDL layer is produced by the `make_fields` function (as a layer of the raster "cdl_fields").
+
+```{r}
+margin.lc <- 171                  # define margin land cover as 171
+
+fieldmargins <- add_margins_cdl(margin.lc = 171,
+                                margin.rast = margins$field_id, 
+                                cdl.rast = cdl_fields$cdl.clean)
+
+```

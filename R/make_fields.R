@@ -15,7 +15,7 @@
 #' @export
 #'
 make_fields <- function(fields.poly, field.col, cdl.rast){
-  fields.poly <- fields.poly %>% dplyr::mutate(field.id=row_number())
+  fields.poly <- fields.poly %>% dplyr::mutate(field.id=dplyr::row_number())
 
   mgmt.zones <- terra::rasterize(fields.poly, cdl.rast, field = "field.id") # field IDs
   mgmt.crops <- terra::rasterize(fields.poly, cdl.rast, field = field.col) # field crops

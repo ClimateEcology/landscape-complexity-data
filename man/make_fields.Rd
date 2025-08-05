@@ -4,7 +4,7 @@
 \alias{make_fields}
 \title{Make fields raster from crop sequence boundaries polygons}
 \usage{
-make_fields(fields.poly, field.col, cdl.rast, field.rcl, section.size)
+make_fields(fields.poly, field.col, cdl.rast)
 }
 \arguments{
 \item{fields.poly}{Crop sequence boundaries polygons, in sf format}
@@ -12,10 +12,6 @@ make_fields(fields.poly, field.col, cdl.rast, field.rcl, section.size)
 \item{field.col}{Crop ID column name in csb polygon vector object}
 
 \item{cdl.rast}{CDL raster on which to superimpose the \code{fields.poly} fields}
-
-\item{field.rcl}{Reclass table to identify field cells}
-
-\item{section.size}{length of field border to define as a section}
 }
 \value{
 3-layer terra raster of field id, crop fields, and cdl with 'cleaned'

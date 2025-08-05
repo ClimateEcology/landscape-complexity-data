@@ -12,7 +12,7 @@ query_cropbdry <- function(polysf, cropbdry.path){
     polysf <- sf::st_transform(x=polysf, crs=cropbdry.crs)
   }
 
-  thesecounties <- counties[st_intersects(polysf, counties)[[1]],]
+  thesecounties <- counties[sf::st_intersects(polysf, counties)[[1]],]
 
   # use sql to subset to containing counties
   cropbdry.sql <- paste0("SELECT * FROM nationalGIS WHERE ",
@@ -26,8 +26,8 @@ query_cropbdry <- function(polysf, cropbdry.path){
                     collapse=" OR "
                   ))
 
-  cty.cropbdry <- st_read(cropbdry.path, query = cropbdry.sql)
+  cty.cropbdry <- sf::st_read(cropbdry.path, query = cropbdry.sql)
 
   # subset to crop boundaries within polysf
-  cty.cropbdry[polysf, op=st_within]
+  cty.cropbdry[polysf, op=sf::st_within]
 }

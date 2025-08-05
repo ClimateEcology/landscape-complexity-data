@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+# output of readme
+/biophys_sdr.csv
+/marginfield.tif
+.DS_Store

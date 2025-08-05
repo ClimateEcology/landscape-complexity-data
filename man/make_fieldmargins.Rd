@@ -4,28 +4,13 @@
 \alias{make_fieldmargins}
 \title{Make field margin layers}
 \usage{
-make_fieldmargins(
-  field.id.rast,
-  inner.margin.cost = 2,
-  field.crop.rast,
-  id.type = "section",
-  section.rast,
-  show.progress = TRUE
-)
+make_fieldmargins(field.id.rast, field.crop.rast, show.progress = TRUE)
 }
 \arguments{
 \item{field.id.rast}{field id raster, \code{id} layer returned from \code{make_fields}}
 
-\item{inner.margin.cost}{proportional cost of an inner border compared to
-outer field border. Default is inner border is 2x cost}
-
 \item{field.crop.rast}{field crop raster, \code{crop} layer returned from
 \code{make_fields}}
-
-\item{id.type}{Type of margin grouping" \code{section} chunks the borders (needs
-to have the section.id layer). \code{pixel} makes pixel-based ids}
-
-\item{section.rast}{raster for border section ids.}
 
 \item{show.progress}{T/F show progress}
 }

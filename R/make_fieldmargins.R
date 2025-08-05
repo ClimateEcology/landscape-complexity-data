@@ -4,8 +4,6 @@
 #' determines field margins, including inner and outer margin costs
 #'
 #' @param field.id.rast field id raster, `id` layer returned from `make_fields`
-#' @param inner.margin.cost proportional cost of an inner border compared to
-#'   outer field border. Default is inner border is 2x cost
 #' @param field.crop.rast field crop raster, `crop` layer returned from
 #'   `make_fields`
 #' @param show.progress T/F show progress
@@ -14,7 +12,7 @@
 #'   and 3) margin field id
 #' @export
 #'
-make_fieldmargins <- function(field.id.rast, inner.margin.cost=2,
+make_fieldmargins <- function(field.id.rast,
                               field.crop.rast,
                               show.progress=TRUE){
 
@@ -32,18 +30,14 @@ make_fieldmargins <- function(field.id.rast, inner.margin.cost=2,
     if(show.progress) setTxtProgressBar(pb,i)
   }
 
-  # cost of installation
-  outsideborders <- terra::boundaries(terra::ifel(!is.na(field.id.rast),1,NA))
+  fieldborders.no0 <- terra::ifel(fieldborders==0, NA, fieldborders) # remove zero cells
 
-  costborders <- terra::ifel(outsideborders==1, 1, inner.margin.cost*fieldborders)       # outside borders should cost less
-  costborders <- terra::ifel(costborders==0, NA, costborders) # remove zero cells
+  field_id <- terra::ifel(!is.na(fieldborders.no0), field.id.rast, NA)
 
-  field_id <- terra::ifel(!is.na(costborders), field.id.rast, NA)
+  field_crop <- terra::ifel(!is.na(fieldborders.no0), field.crop.rast, NA)
 
-  field_crop <- terra::ifel(!is.na(costborders), field.crop.rast, NA)
-
-  fieldmargins <- terra::rast(terra::sds(list(costborders, field_id, field_crop)))
-  names(fieldmargins) <- c("cost", "field_id", "field_crop")
+  fieldmargins <- terra::rast(terra::sds(list(field_id, field_crop)))
+  names(fieldmargins) <- c("field_id", "field_crop")
 
   return(fieldmargins)
 
