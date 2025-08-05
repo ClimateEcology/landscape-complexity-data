@@ -8,7 +8,7 @@
 #' @export
 #'
 query_cropbdry <- function(polysf, cropbdry.path){
-  if(st_crs(polysf)!=cropbdry.crs){
+  if(sf::st_crs(polysf)!=cropbdry.crs){
     polysf <- sf::st_transform(x=polysf, crs=cropbdry.crs)
   }
 

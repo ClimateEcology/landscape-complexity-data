@@ -37,19 +37,24 @@ make_kc_curves(
 
 \item{Lini}{L_ini length of Kc_ini period}
 
-\item{Ldev}{L_dev length of development period between Kc_ini and Kc_mid periods}
+\item{Ldev}{L_dev length of development period between Kc_ini and Kc_mid
+periods}
 
 \item{Lmid}{L_mid length of Kc_mid period}
 
-\item{Llate}{L_late length of period transitioning from end of Kc_mid to Kc_end}
+\item{Llate}{L_late length of period transitioning from end of Kc_mid to
+Kc_end}
 
 \item{dayPlant}{Julian day of spring crop}
 
-\item{dayHarvest}{(Optional) date of harvest. Only needed if Lmid and Llate are not provided}
+\item{dayHarvest}{(Optional) date of harvest. Only needed if Lmid and Llate
+are not provided}
 
-\item{doublecrop}{T/F whether to calculate curve for a winter crop (double-cropping), default is FALSE}
+\item{doublecrop}{T/F whether to calculate curve for a winter crop
+(double-cropping), default is FALSE}
 
-\item{winter.dayPlant}{(Optional) Julian day of winter planting, only for double crops}
+\item{winter.dayPlant}{(Optional) Julian day of winter planting, only for
+double crops}
 
 \item{winter.ini}{(Optional) Kc_ini for winter crop}
 
@@ -59,11 +64,13 @@ make_kc_curves(
 
 \item{winter.Lini}{(Optional) L_ini length of Kc_ini of winter crop}
 
-\item{winter.Ldev}{(Optional) L_dev length of development between Kc_ini and Kc_mid of winter crop}
+\item{winter.Ldev}{(Optional) L_dev length of development between Kc_ini and
+Kc_mid of winter crop}
 
 \item{winter.Lmid}{(Optional) L_mid length of Kc_mid period of winter crop}
 
-\item{winter.Llate}{(Optional) L_late length of period from end of Kc_mid to Kc_end of winter crop}
+\item{winter.Llate}{(Optional) L_late length of period from end of Kc_mid to
+Kc_end of winter crop}
 
 \item{monthly}{T/F whether to return daily (F) or monthly (T) Kc values.}
 
@@ -75,7 +82,12 @@ make_kc_curves(
 A dataframe of daily or monthly Kc values based on inputs
 }
 \description{
-Make Kc curves
+Follows the FAO method of defining Kc curves based on crop development
+stages. Kc values are calculated for every day of the year based on the
+user-provided Kc values, development dates, and stage lengths from Allen et
+al. (1998). If \code{doublecrop} is indicated, then these parameter values for the
+second crop must also be provided. If \code{Nistor} is TRUE, then season-based Kc
+values from Nistor et al. (2018) need to be provided.
 }
 \examples{
 make_kc_curves(ini=0.7,mid=1.2,end=0.48,Lini=30,Ldev=40,Lmid=50,Llate=50,dayPlant=105,doublecrop=TRUE,winter.dayPlant=288,winter.ini=0.4,winter.mid=1.15,winter.end=0.33,winter.Lini=30,winter.Ldev=140,winter.Lmid=40,winter.Llate=30)

@@ -9,37 +9,24 @@
 #' @param fields.poly Crop sequence boundaries polygons, in sf format
 #' @param field.col Crop ID column name in csb polygon vector object
 #' @param cdl.rast CDL raster on which to superimpose the `fields.poly` fields
-#' @param field.rcl Reclass table to identify field cells
-#' @param section.size length of field border to define as a section
 #'
 #' @return 3-layer terra raster of field id, crop fields, and cdl with 'cleaned'
 #'   crop fields
 #' @export
 #'
-make_fields <- function(fields.poly, field.col, cdl.rast, field.rcl, section.size){
-  fields.poly <- fields.poly %>% mutate(field.id=row_number())
-  fields.sect <- list()
-
-  for(g in 1:nrow(fields.poly)){
-    fields.sect[[g]] <- make_fieldsections(fields.poly[g,], section.size = section.size) %>%
-      mutate(field.id = fields.poly[g,] %>% sf::st_drop_geometry() %>% dplyr::pull(field.id))
-  }
-  fields.sect <- bind_rows(fields.sect) %>% mutate(section.id=row_number()) %>%
-    relocate(section.id)
+make_fields <- function(fields.poly, field.col, cdl.rast){
+  fields.poly <- fields.poly %>% dplyr::mutate(field.id=row_number())
 
   mgmt.zones <- terra::rasterize(fields.poly, cdl.rast, field = "field.id") # field IDs
   mgmt.crops <- terra::rasterize(fields.poly, cdl.rast, field = field.col) # field crops
-  mgmt.sect <- terra::rasterize(fields.sect, cdl.rast, field = "section.id") # field sections
 
   mgmt.cdl <- terra::ifel(is.na(mgmt.zones),mgmt.zones,cdl.rast) # isolate AOI area
 
   mgmt.fld <- terra::classify(mgmt.cdl, rcl = field.rcl)   # keep only field areas
   mgmt.fld.id <- terra::ifel(mgmt.fld==1, mgmt.zones, NA)  # cdl field cells with the ID
   mgmt.fld.crop <- terra::ifel(mgmt.fld==1, mgmt.crops, NA)  # cdl field cells with crop
-  mgmt.fld.sect <- terra::ifel(mgmt.fld==1, mgmt.sect, NA)  # cdl field cells with crop
 
   cdl.clean <- terra::ifel(is.na(mgmt.fld.crop), cdl.rast, mgmt.fld.crop)
 
-  terra::rast(list(id=mgmt.fld.id, crop=mgmt.fld.crop, cdl.clean=cdl.clean,
-                   section=mgmt.fld.sect))
+  terra::rast(list(id=mgmt.fld.id, crop=mgmt.fld.crop, cdl.clean=cdl.clean))
 }

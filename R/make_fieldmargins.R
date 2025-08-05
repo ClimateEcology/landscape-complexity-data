@@ -8,9 +8,6 @@
 #'   outer field border. Default is inner border is 2x cost
 #' @param field.crop.rast field crop raster, `crop` layer returned from
 #'   `make_fields`
-#' @param section.rast raster for border section ids.
-#' @param id.type Type of margin grouping" `section` chunks the borders (needs
-#'   to have the section.id layer). `pixel` makes pixel-based ids
 #' @param show.progress T/F show progress
 #'
 #' @return A list with a raster stack of 1) margin cell id, 2) margin cell cost,
@@ -19,8 +16,6 @@
 #'
 make_fieldmargins <- function(field.id.rast, inner.margin.cost=2,
                               field.crop.rast,
-                              id.type = "section",
-                              section.rast,
                               show.progress=TRUE){
 
   field.ids <- terra::unique(field.id.rast)[,1]
@@ -43,24 +38,12 @@ make_fieldmargins <- function(field.id.rast, inner.margin.cost=2,
   costborders <- terra::ifel(outsideborders==1, 1, inner.margin.cost*fieldborders)       # outside borders should cost less
   costborders <- terra::ifel(costborders==0, NA, costborders) # remove zero cells
 
-
-
-  if(id.type=="section"){
-    cell_id <- ifel(fieldborders==1, section.rast, NA)
-  }else if(id.type=="pixel"){
-    borderpts <- terra::as.points(costborders)
-    borderpts[["id"]] <- 1:nrow(borderpts)
-    cell_id <- terra::rasterize(borderpts, costborders, field = "id")
-  }else{
-    stop("No ID type provided")
-  }
-
   field_id <- terra::ifel(!is.na(costborders), field.id.rast, NA)
 
   field_crop <- terra::ifel(!is.na(costborders), field.crop.rast, NA)
 
-  fieldmargins <- terra::rast(terra::sds(list(cell_id, costborders, field_id, field_crop)))
-  names(fieldmargins) <- c("id", "cost", "field_id", "field_crop")
+  fieldmargins <- terra::rast(terra::sds(list(costborders, field_id, field_crop)))
+  names(fieldmargins) <- c("cost", "field_id", "field_crop")
 
   return(fieldmargins)
 
