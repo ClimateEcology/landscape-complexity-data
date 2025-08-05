@@ -1,23 +1,37 @@
 #' Make Kc curves
 #'
+#' Follows the FAO method of defining Kc curves based on crop development
+#' stages. Kc values are calculated for every day of the year based on the
+#' user-provided Kc values, development dates, and stage lengths from Allen et
+#' al. (1998). If `doublecrop` is indicated, then these parameter values for the
+#' second crop must also be provided. If `Nistor` is TRUE, then season-based Kc
+#' values from Nistor et al. (2018) need to be provided.
+#'
 #' @param ini Kc_ini crop coefficient
 #' @param mid Kc_mid crop coefficient
 #' @param end Kc_end crop coefficient
 #' @param Lini L_ini length of Kc_ini period
-#' @param Ldev L_dev length of development period between Kc_ini and Kc_mid periods
+#' @param Ldev L_dev length of development period between Kc_ini and Kc_mid
+#'   periods
 #' @param Lmid L_mid length of Kc_mid period
-#' @param Llate L_late length of period transitioning from end of Kc_mid to Kc_end
+#' @param Llate L_late length of period transitioning from end of Kc_mid to
+#'   Kc_end
 #' @param dayPlant Julian day of spring crop
-#' @param dayHarvest (Optional) date of harvest. Only needed if Lmid and Llate are not provided
-#' @param doublecrop T/F whether to calculate curve for a winter crop (double-cropping), default is FALSE
-#' @param winter.dayPlant (Optional) Julian day of winter planting, only for double crops
+#' @param dayHarvest (Optional) date of harvest. Only needed if Lmid and Llate
+#'   are not provided
+#' @param doublecrop T/F whether to calculate curve for a winter crop
+#'   (double-cropping), default is FALSE
+#' @param winter.dayPlant (Optional) Julian day of winter planting, only for
+#'   double crops
 #' @param winter.ini (Optional) Kc_ini for winter crop
 #' @param winter.mid (Optional) Kc_mid for winter crop
 #' @param winter.end (Optional) Kc_end for winter crop
 #' @param winter.Lini (Optional) L_ini length of Kc_ini of winter crop
-#' @param winter.Ldev (Optional) L_dev length of development between Kc_ini and Kc_mid of winter crop
+#' @param winter.Ldev (Optional) L_dev length of development between Kc_ini and
+#'   Kc_mid of winter crop
 #' @param winter.Lmid (Optional) L_mid length of Kc_mid period of winter crop
-#' @param winter.Llate (Optional) L_late length of period from end of Kc_mid to Kc_end of winter crop
+#' @param winter.Llate (Optional) L_late length of period from end of Kc_mid to
+#'   Kc_end of winter crop
 #' @param monthly T/F whether to return daily (F) or monthly (T) Kc values.
 #' @param Nistor T/F whether to use the method in Nistor et al. 2018
 #' @param cold cold period parameter from Nistor et al. 2018
