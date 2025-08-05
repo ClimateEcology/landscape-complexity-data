@@ -48,7 +48,7 @@ selected_mgmt_units <- query_cropbdry(watershed, "path/to/crop_sequence_boundary
 
 #### 2. Add management units to the cropland data layer raster
 
-The extracted management unit polygons are added to the [cropland data layer](https://www.nass.usda.gov/Research_and_Science/Cropland/SARS1a.php) (CDL) using the function `make_fields`.
+The extracted management unit polygons are added to the [cropland data layer](https://www.nass.usda.gov/Research_and_Science/Cropland/SARS1a.php) (CDL) coverage of the waterhsed using the function `make_fields`.
 
 ```r
 cdl <- terra::rast("path/to/cdl.tif")
